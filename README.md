@@ -34,6 +34,7 @@ Possible options are:
 * `--ldflags=LDFLAGS`    Default linker flags.
 * `--debug`              Debug mode.
 * `-h`, `--help`         Print help and exit.
+
 The default license is `MIT`, you can specify `none` to not choose an
 initial license.  Letter case is not significant for the license.  The
 values of `--cflags`, `--deplibs` and `--ldflags` are used to set default
