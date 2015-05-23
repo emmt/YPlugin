@@ -1,0 +1,288 @@
+#! /bin/sh
+#
+# Installation script for a new Yorick plugin.
+#
+#------------------------------------------------------------------------------
+#
+# Copyright (C) 2015 Éric Thiébaut <eric.thiebaut@univ-lyon1.fr>
+#
+#------------------------------------------------------------------------------
+
+# Cleanup callback.
+cfg_tmpdir=.
+cfg_tmpfile="$cfg_tmpdir/cfg-$$"
+cfg_debug=no
+cfg_on_exit () {
+    if test "$cfg_debug" = "no"; then
+        rm -f "$cfg_tmpfile" "$cfg_tmpfile.i"
+    fi
+}
+trap cfg_on_exit 0
+
+cfg_progname=$0
+cfg_srcdir=$(dirname "$0")
+cfg_workdir=$(pwd)
+cd "$cfg_srcdir"
+cfg_srcdir=$(pwd)
+cd "$cfg_workdir"
+#cfg_path=$(readlink -fn "$@")
+#cfg_srcdir=$(dirname "$cfg_path")
+
+cfg_die () { echo >&2 "$cfg_progname: $*"; exit 1; }
+
+git --version 2>>/dev/null 1>&2 || die "you must have git installed"
+
+cfg_mkdir () {
+    local dir
+    for dir in "$@"; do
+        test -d "$dir" \
+            || mkdir -p "$dir" \
+            || cfg_die "failed to make directory \"$dir\""
+    done
+}
+
+cfg_opt_value () { echo "$*" | sed -e 's/^--[^=]*=//'; }
+
+cfg_despace () { echo "$*" | sed -e 's/ /\\ /g'; }
+
+cfg_substitute () {
+    local s t
+    s=$*
+    for t in "/" "%" "@" "," ";"; do
+        case "$s" in
+            *$t* )
+                ;;
+            * )
+                break
+        esac
+    done
+    if test "$t" = ";"; then
+        cfg_die "No valid separator found"
+    fi
+    s="s${t}${1}${t}${2}${t}g"
+    if test "x$cfg_sedscript" = "x"; then
+        cfg_sedscript="$s"
+    else
+        cfg_sedscript="$cfg_sedscript;$s"
+    fi
+}
+
+cfg_install () {
+  local src
+  local dst
+  local dir
+  src="$1"
+  dst="$2"
+  dir=$(dirname "$dst")
+  cfg_mkdir "$dir"
+  sed -e "$cfg_sedscript" < "$src" > "$dst"
+}
+
+cfg_name=""
+cfg_destdir=""
+cfg_descr="Yorick plug-in sample"
+cfg_cflags=""
+cfg_deplibs=""
+cfg_ldflags=""
+cfg_author=$(git config --global --get user.name)
+cfg_email=$(git config --global --get user.email)
+cfg_year=$(date +%Y)
+cfg_license=mit
+
+cfg_help () {
+  cat <<EOF
+Usage: $cfg_progname [-h|--help] [OPTIONS] [--] NAME DESTDIR
+   Create an initial GIT repository for Yorick plugin NAME in directory
+   DESTDIR which must not already exists.
+
+Options:
+  --author=AUTHOR      Author(s) of this software [$cfg_author].
+  --email=ADDRESS      Email address to join the author(s) [$cfg_email].
+  --descr=DESCR        Short description of this software
+                       [$cfg_descr].
+  --license=mit|gpl|lgpl|cecill|cecill-b|cecill-c|none
+                       Type of license [$cfg_license].
+  --cflags=CFLAGS      Default compiler flags [$cfg_cflags].
+  --deplibs=DEPLIBS    Default flags for dependencies [$cfg_deplibs],
+                       for instance:
+                         --deplibs='-Lsomedir -lsomelib'
+  --ldflags=LDFLAGS    Default linker flags [$cfg_ldflags].
+  --debug              Debug mode.
+  -h, --help           Print this help and exit.
+EOF
+}
+
+while test $# -ge 1; do
+    cfg_arg=$1
+    case "$cfg_arg" in
+        -h | --help )
+            cfg_help
+            exit 0
+            ;;
+        --author=*)
+            cfg_author=$(cfg_opt_value "$cfg_arg")
+            ;;
+        --email=*)
+            cfg_email=$(cfg_opt_value "$cfg_arg")
+            ;;
+        --ldflags=*)
+            cfg_ldflags=$(cfg_opt_value "$cfg_arg")
+            ;;
+        --license=*)
+            cfg_license=$(cfg_opt_value "$cfg_arg" | tr A-Z a-z)
+            ;;
+        --deplibs=*)
+            cfg_deplibs=$(cfg_opt_value "$cfg_arg")
+            ;;
+        --descr=*)
+            cfg_descr=$(cfg_opt_value "$cfg_arg")
+            ;;
+        --debug)
+            cfg_debug=yes
+            ;;
+        --)
+            shift
+            break
+            ;;
+        -*)
+            cfg_die "Unknown option \"$cfg_arg\""
+            ;;
+        *)
+            break
+            ;;
+    esac
+    shift
+done
+
+# Parse other arguments.
+test $# -lt 1 && cfg_die "Missing plugin name (try with --help option)"
+test $# -lt 2 && cfg_die "Missing repository directory (try with --help option)"
+test $# -gt 2 && cfg_die "Too many arguments (try with --help option)"
+cfg_Name=$1
+cfg_destdir=$2
+test -d "$cfg_destdir" && cfg_die "directory \"$cfg_destdir\" already exists"
+cfg_name=$(echo "$cfg_Name" | tr A-Z a-z | sed 's/[- ][- ]*/_/g')
+
+# Check some options.
+if test "x$cfg_author" = "x"; then
+    if test -r "/etc/passwd"; then
+        cfg_author=$(grep "^${USER}:" "/etc/passwd" \
+            | sed 's/^[^:]*:[^:]*:[^:]*:[^:]*: *\([^:,]*\).*/\1/')
+    fi
+    if test "$cfg_author" = ""; then
+        cfg_author=${USER}
+    fi
+    echo "WARNING The author name was not set.  I will use the following guess"
+    echo "        from your login name and the /etc/passwd file:"
+    echo ""
+    echo "            $cfg_author"
+    echo ""
+    echo "        You may use the --author=AUTHOR option or set your global"
+    echo "        GIT user name with the command:"
+    echo ""
+    echo "            git config --global --add user.name NAME"
+    echo ""
+fi
+
+if test "x$cfg_email" = "x"; then
+    echo "WARNING Your email address is not set.  An empty value will be used."
+    echo "        You may use the --email=ADDRESS option or set your global GIT"
+    echo "        user email address with the command:"
+    echo ""
+    echo "            git config --global --add user.email ADDRESS"
+    echo ""
+fi
+
+if test "$cfg_license" != "none"; then
+    test -r "$cfg_srcdir/src/LICENSE.$cfg_license" \
+        || cfg_die "Unknown license \"$cfg_license\""
+fi
+
+# Make subsitution rules (make sure email is the last one).
+cfg_sedscript=""
+cfg_substitute "@author@"       "$cfg_author"
+cfg_substitute "@Name@"         "$cfg_Name"
+cfg_substitute "@name@"         "$cfg_name"
+cfg_substitute "@descr@"        "$cfg_descr"
+cfg_substitute "@year@"         "$cfg_year"
+cfg_substitute "@cflags@"       "$cfg_cflags"
+cfg_substitute "@deplibs@"      "$cfg_deplibs"
+cfg_substitute "@ldflags@"      "$cfg_ldflags"
+if test "x$cfg_email" = "x"; then
+    cfg_substitute " *@email@"  ""
+else
+    cfg_substitute "@email@"    "<$cfg_email>"
+fi
+
+# Print summary.
+echo "Your initial repository will be created with settings:"
+echo "  destdir -----> $cfg_destdir"
+echo "  name --------> $cfg_Name ($cfg_name)"
+echo "  descr -------> $cfg_descr"
+echo "  author ------> $cfg_author"
+echo "  email -------> $cfg_email"
+echo "  license -----> $cfg_license"
+echo "  cflags ------> $cfg_cflags"
+echo "  deplibs -----> $cfg_deplibs"
+echo "  ldflags -----> $cfg_ldflags"
+echo "  year --------> $cfg_year"
+if test "$cfg_debug" = "yes"; then
+    echo "  srcdir ------> $cfg_srcdir"
+    echo "  sedscript ---> $cfg_sedscript"
+fi
+echo ""
+read -p "Do you agree with that? (yes/no) [no] " cfg_answer
+if test "$cfg_answer" != "yes"; then
+    echo "Creation abandonned."
+    echo "Perhaps try with option --help for some help."
+    exit
+else
+    echo "OK let's go..."
+    echo ""
+fi
+
+# Create initial empty repository.
+cfg_mkdir "$cfg_destdir"
+cd "$cfg_destdir"
+git init
+
+# Copy the files.
+for file in Makefile configure README.md; do
+    cfg_install "$cfg_srcdir/src/$file" "$cfg_destdir/$file"
+done
+chmod 755 "$cfg_destdir/configure"
+for file in gitattributes gitignore; do
+    cfg_install "$cfg_srcdir/src/$file" "$cfg_destdir/.$file"
+done
+if test -r "$cfg_srcdir/src/LICENSE.$cfg_license"; then
+    cfg_install "$cfg_srcdir/src/LICENSE.$cfg_license" "$cfg_destdir/LICENSE.md"
+fi
+for file in c_cleanup code_cleanup ymk_cleanup; do
+    cfg_install "$cfg_srcdir/src/$file" "$cfg_destdir/tools/$file"
+    chmod 755 "$cfg_destdir/tools/$file"
+done
+cfg_install "$cfg_srcdir/src/sample.i" "$cfg_destdir/$cfg_name.i"
+cfg_install "$cfg_srcdir/src/ysample.c" "$cfg_destdir/y$cfg_name.c"
+
+# Initialize the repository.
+cd "$cfg_destdir"
+touch NEWS TODO
+if test "x$cfg_email" != "x"; then
+    echo "$cfg_author <$cfg_email>" > AUTHORS
+else
+    echo "$cfg_author" > AUTHORS
+fi
+git add .gitignore Makefile configure README.md AUTHORS NEWS TODO
+git add "y$cfg_name.c" "$cfg_name.i"
+test -r LICENSE.md && git add LICENSE.md
+git commit -m "Initial repository"
+git add tools/* .gitattributes
+git commit -m "Add filters"
+
+# Local Variables:
+# mode: sh
+# tab-width: 8
+# indent-tabs-mode: nil
+# fill-column: 78
+# coding: utf-8
+# End:
