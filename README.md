@@ -43,8 +43,8 @@ author name and email are guessed from the global Git configuration
 parameters or from the informations available in `/etc/passwd`.  If not yet
 done, you may set these with:
 ```
-git config --global --add user.name NAME
-git config --global --add user.email EMAIL
+git config --global user.name "FULL NAME"
+git config --global user.email "EMAIL"
 ```
 If you accept the settings, the `create` script makes the `DESTDIR` and
 populates it with some initial files.  Instructions in the `README.md` file
