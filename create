@@ -243,8 +243,6 @@ fi
 
 # Create initial empty repository.
 cfg_mkdir "$cfg_destdir"
-cd "$cfg_destdir"
-git init
 
 # Copy the files.
 for file in Makefile configure README.md; do
@@ -266,6 +264,7 @@ cfg_install "$cfg_srcdir/src/ysample.c" "$cfg_destdir/y$cfg_name.c"
 
 # Initialize the repository.
 cd "$cfg_destdir"
+git init
 touch NEWS TODO
 if test "x$cfg_email" != "x"; then
     echo "$cfg_author <$cfg_email>" > AUTHORS
