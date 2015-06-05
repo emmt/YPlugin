@@ -100,7 +100,7 @@ Options:
   --email=ADDRESS      Email address to join the author(s) [$cfg_email].
   --descr=DESCR        Short description of this software
                        [$cfg_descr].
-  --license=mit|gpl|lgpl|cecill|cecill-b|cecill-c|none
+  --license=mit|gpl|gpl2|gpl3|lgpl|cecill|cecill-b|cecill-c|none
                        Type of license [$cfg_license].
   --cflags=CFLAGS      Default compiler flags [$cfg_cflags].
   --deplibs=DEPLIBS    Default flags for dependencies [$cfg_deplibs],
