@@ -4,7 +4,7 @@ This is a simple script to help you creating a Git repository for a
 [Yorick](http://yorick.github.com/) plug-in.
 
 Compared to the standard:
-```
+```sh
 yorick -batch make.i
 ```
 this script populates a directory with initial files (`Makefile`,
@@ -18,10 +18,13 @@ built in a different directory leaving the source tree unchanged).
 ## Usage
 
 You simply execute the [`create`](./create) script with a few parameters:
-``` ./create [-h|--help] [OPTIONS] [--] NAME DESTDIR ``` to create an
-initial Git repository for Yorick plugin `NAME` in directory `DESTDIR`
-which must not already exists.  Note that the scrip may be executed from
-anywhere.
+```sh
+./create [-h|--help] [OPTIONS] [--] NAME [DESTDIR]
+```
+to create an initial Git repository for Yorick plugin `NAME` in directory
+`DESTDIR` which must not already exists.  If `DESTDIR` is not given, it is
+taken to be the argument `NAME` (with `/` replaced by `-`).  Note that the
+scrip may be executed from anywhere.
 
 Possible options are:
 * `--author=AUTHOR`      Author(s) of the plug-in.
