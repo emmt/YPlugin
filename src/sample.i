@@ -1,5 +1,5 @@
 /*
- * @name@.i --
+ * @pkg_i@ --
  *
  * @descr@.
  *
@@ -11,10 +11,10 @@
  *
  */
 
-if (is_func(plug_in)) plug_in, "@name@";
+if (is_func(plug_in)) plug_in, "@pkg_name@";
 
-extern @name@_greetings;
-/* DOCUMENT @name@_greeting
+extern @pkg_name@_greetings;
+/* DOCUMENT @pkg_name@_greeting
      Print "hello world".
    SEE ALSO:
  */

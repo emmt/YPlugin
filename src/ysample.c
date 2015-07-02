@@ -1,5 +1,5 @@
 /*
- * y@name@.c --
+ * @pkg_c@ --
  *
  * Implements @descr@.
  *
@@ -37,9 +37,9 @@ PLUG_API void y_error(const char *) __attribute__ ((noreturn));
 static void push_string(const char* str);
 
 void
-Y_@name@_greetings(int argc)
+Y_@pkg_name@_greetings(int argc)
 {
-  push_string("Hello, this is \"@Name@\" (@descr@)");
+  push_string("Hello, this is \"@name@\" (@descr@)");
 }
 
 static void

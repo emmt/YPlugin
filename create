@@ -78,8 +78,10 @@ cfg_install () {
   sed -e "$cfg_sedscript" < "$src" > "$dst"
 }
 
-cfg_name=""
+cfg_pkg_name=""
 cfg_destdir=""
+cfg_pkg_i=""
+cfg_pkg_c=""
 cfg_descr="Yorick plug-in sample"
 cfg_cflags=""
 cfg_deplibs=""
@@ -91,7 +93,7 @@ cfg_license=mit
 
 cfg_help () {
   cat <<EOF
-Usage: $cfg_progname [-h|--help] [OPTIONS] [--] NAME DESTDIR
+Usage: $cfg_progname [-h|--help] [OPTIONS] [--] NAME [DESTDIR]
    Create an initial GIT repository for Yorick plugin NAME in directory
    DESTDIR which must not already exists.
 
@@ -107,6 +109,8 @@ Options:
                        for instance:
                          --deplibs='-Lsomedir -lsomelib'
   --ldflags=LDFLAGS    Default linker flags [$cfg_ldflags].
+  --pkg_i=PKG_I        Name of Yorick file with plug-in code.
+  --pkg_c=PKG_C        Name of C file with C code.
   --debug              Debug mode.
   -h, --help           Print this help and exit.
 EOF
@@ -137,6 +141,12 @@ while test $# -ge 1; do
         --descr=*)
             cfg_descr=$(cfg_opt_value "$cfg_arg")
             ;;
+        --pkg_i=*)
+            cfg_pkg_i=$(cfg_opt_value "$cfg_arg")
+            ;;
+        --pkg_c=*)
+            cfg_pkg_c=$(cfg_opt_value "$cfg_arg")
+            ;;
         --debug)
             cfg_debug=yes
             ;;
@@ -156,12 +166,24 @@ done
 
 # Parse other arguments.
 test $# -lt 1 && cfg_die "Missing plugin name (try with --help option)"
-test $# -lt 2 && cfg_die "Missing repository directory (try with --help option)"
 test $# -gt 2 && cfg_die "Too many arguments (try with --help option)"
-cfg_Name=$1
-cfg_destdir=$2
+cfg_name=$1
+if test $# -lt 2; then
+    cfg_destdir=$(echo "$cfg_name" | sed -r 's,/+,-,g;s,^,./,')
+else
+    cfg_destdir=$2
+fi
+
+# Package name.
 test -d "$cfg_destdir" && cfg_die "directory \"$cfg_destdir\" already exists"
-cfg_name=$(echo "$cfg_Name" | tr A-Z a-z | sed 's/[- ][- ]*/_/g')
+cfg_pkg_name=$(echo "$cfg_name" | tr A-Z a-z | sed -r 's/[^a-z0-9]+/_/g')
+if test "$cfg_pkg_i" = ""; then
+    cfg_pkg_i=${cfg_pkg_name}.i
+fi
+if test "$cfg_pkg_c" = ""; then
+    cfg_pkg_c=${cfg_pkg_name}.c
+fi
+cfg_pkg_o=$(echo "$cfg_pkg_c" | sed -r 's/\.[^.]*$/.o/')
 
 # Check some options.
 if test "x$cfg_author" = "x"; then
@@ -201,8 +223,11 @@ fi
 # Make subsitution rules (make sure email is the last one).
 cfg_sedscript=""
 cfg_substitute "@author@"       "$cfg_author"
-cfg_substitute "@Name@"         "$cfg_Name"
 cfg_substitute "@name@"         "$cfg_name"
+cfg_substitute "@pkg_name@"     "$cfg_pkg_name"
+cfg_substitute "@pkg_i@"        "$cfg_pkg_i"
+cfg_substitute "@pkg_c@"        "$cfg_pkg_c"
+cfg_substitute "@pkg_o@"        "$cfg_pkg_o"
 cfg_substitute "@descr@"        "$cfg_descr"
 cfg_substitute "@year@"         "$cfg_year"
 cfg_substitute "@cflags@"       "$cfg_cflags"
@@ -216,16 +241,19 @@ fi
 
 # Print summary.
 echo "Your initial repository will be created with settings:"
-echo "  destdir -----> $cfg_destdir"
-echo "  name --------> $cfg_Name ($cfg_name)"
-echo "  descr -------> $cfg_descr"
-echo "  author ------> $cfg_author"
-echo "  email -------> $cfg_email"
-echo "  license -----> $cfg_license"
-echo "  cflags ------> $cfg_cflags"
-echo "  deplibs -----> $cfg_deplibs"
-echo "  ldflags -----> $cfg_ldflags"
-echo "  year --------> $cfg_year"
+echo "  destdir --------> $cfg_destdir"
+echo "  name (DLL) -----> $cfg_name ($cfg_pkg_name)"
+echo "  Yorick code ----> $cfg_pkg_i"
+echo "  C code ---------> $cfg_pkg_c ($cfg_pkg_o)"
+echo "  code -----------> $cfg_pkg_i $cfg_pkg_c"
+echo "  descr ----------> $cfg_descr"
+echo "  author ---------> $cfg_author"
+echo "  email ----------> $cfg_email"
+echo "  license --------> $cfg_license"
+echo "  cflags ---------> $cfg_cflags"
+echo "  deplibs --------> $cfg_deplibs"
+echo "  ldflags --------> $cfg_ldflags"
+echo "  year -----------> $cfg_year"
 if test "$cfg_debug" = "yes"; then
     echo "  srcdir ------> $cfg_srcdir"
     echo "  sedscript ---> $cfg_sedscript"
@@ -259,8 +287,8 @@ for file in c_cleanup code_cleanup ymk_cleanup; do
     cfg_install "$cfg_srcdir/src/$file" "$cfg_destdir/tools/$file"
     chmod 755 "$cfg_destdir/tools/$file"
 done
-cfg_install "$cfg_srcdir/src/sample.i" "$cfg_destdir/$cfg_name.i"
-cfg_install "$cfg_srcdir/src/ysample.c" "$cfg_destdir/y$cfg_name.c"
+cfg_install "$cfg_srcdir/src/sample.i" "$cfg_destdir/$cfg_pkg_i"
+cfg_install "$cfg_srcdir/src/ysample.c" "$cfg_destdir/$cfg_pkg_c"
 
 # Initialize the repository.
 cd "$cfg_destdir"
@@ -272,7 +300,7 @@ else
     echo "$cfg_author" > AUTHORS
 fi
 git add .gitignore Makefile configure README.md AUTHORS NEWS TODO
-git add "y$cfg_name.c" "$cfg_name.i"
+git add "$cfg_pkg_c" "$cfg_pkg_i"
 test -r LICENSE.md && git add LICENSE.md
 git commit -m "Initial repository"
 git add tools/* .gitattributes

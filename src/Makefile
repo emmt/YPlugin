@@ -17,10 +17,10 @@ TGT=$(DEFAULT_TGT)
 
 # ------------------------------------------------ macros for this package
 
-PKG_NAME=@name@
-PKG_I=${srcdir}/@name@.i
+PKG_NAME=@pkg_name@
+PKG_I=${srcdir}/@pkg_i@
 
-OBJS=y@name@.o
+OBJS=@pkg_o@
 
 # change to give the executable a name other than yorick
 PKG_EXENAME=yorick
@@ -44,7 +44,7 @@ PKG_I_START=
 PKG_I_EXTRA=
 
 RELEASE_FILES = AUTHORS LICENSE.md Makefile NEWS README.md TODO \
-	configure @name@.i y@name@.c
+	configure @pkg_i@ @pkg_c@
 RELEASE_NAME = $(PKG_NAME)-$(RELEASE_VERSION).tar.bz2
 
 # -------------------------------- standard targets and rules (in Makepkg)

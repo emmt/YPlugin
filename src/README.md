@@ -1,4 +1,4 @@
-@Name@
+@name@
 ======
 
 @descr@.

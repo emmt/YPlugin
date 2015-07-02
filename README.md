@@ -32,6 +32,8 @@ Possible options are:
 * `--cflags=CFLAGS`      Default compiler flags.
 * `--deplibs=DEPLIBS`    Default flags for dependencies.
 * `--ldflags=LDFLAGS`    Default linker flags.
+* `--pkg_i=PKG_I`        Name of Yorick file with plug-in code.
+* `--pkg_c=PKG_C`        Name of C file with C code.
 * `--debug`              Debug mode.
 * `-h`, `--help`         Print help and exit.
 
@@ -49,3 +51,23 @@ git config --global user.email "EMAIL"
 If you accept the settings, the `create` script makes the `DESTDIR` and
 populates it with some initial files.  Instructions in the `README.md` file
 explain how to use the `configure` script to build the plug-in.
+
+
+## Macros and file names
+
+* `PKG_NAME` is used as the base name for the package dynamically loaded
+  library (DLL) and, prefixed by `yk_`, as the name of the function in the
+  DLL to call to initialize the plug-in.  Thus letters, digits and
+  underscores are the only allowed characters for `PKG_NAME`.  The value of
+  this macro is built from the plug-in name converted to lowercase and
+  with all sequences of forbidden characters replaced by a single
+  underscore.
+
+* Option `--pkg_i=PKG_I` can be used to specify the name of the Yorick
+  source file which has to be `#include`d to load the plug-in.  It
+  corresponds to macro `PKG_I` in `Makefile`.  The default value is
+  `$PKG_NAME.i`.
+
+* Option `--pkg_c=PKG_C` can be used to specify the name of the main
+  C file which has to be compiled to make the plug-in.  Its default value
+  is `$PKG_NAME.c`.
