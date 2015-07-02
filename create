@@ -288,7 +288,7 @@ for file in c_cleanup code_cleanup ymk_cleanup; do
     chmod 755 "$cfg_destdir/tools/$file"
 done
 cfg_install "$cfg_srcdir/src/sample.i" "$cfg_destdir/$cfg_pkg_i"
-cfg_install "$cfg_srcdir/src/ysample.c" "$cfg_destdir/$cfg_pkg_c"
+cfg_install "$cfg_srcdir/src/sample.c" "$cfg_destdir/$cfg_pkg_c"
 
 # Initialize the repository.
 cd "$cfg_destdir"
