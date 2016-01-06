@@ -48,14 +48,4 @@ push_string(const char* str)
   ypush_q(NULL)[0] = p_strcpy(str);
 }
 
-/*
- * Local Variables:
- * mode: C
- * c-basic-offset: 2
- * tab-width: 8
- * indent-tabs-mode: nil
- * fill-column: 79
- * coding: utf-8
- * ispell-local-dictionary: "american"
- * End:
- */
+/*---------------------------------------------------------------------------*/

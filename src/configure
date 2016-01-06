@@ -4,7 +4,9 @@
 #
 #------------------------------------------------------------------------------
 #
-# Copyright (C) 2015: Éric Thiébaut <eric.thiebaut@univ-lyon1.fr>
+# This file is licensed under the MIT "Expat" License.
+#
+# Copyright (C) 2015, Éric Thiébaut <eric.thiebaut@univ-lyon1.fr>
 #
 #------------------------------------------------------------------------------
 
@@ -197,10 +199,4 @@ fi
 echo "Makefile has been updated."
 echo "You can run 'make' and 'make install' now."
 
-# Local Variables:
-# mode: sh
-# tab-width: 8
-# indent-tabs-mode: nil
-# fill-column: 78
-# coding: utf-8
-# End:
+#------------------------------------------------------------------------------
