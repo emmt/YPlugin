@@ -106,8 +106,9 @@ $(RELEASE_NAME):
 	    echo >&2 "directory $$dir already exists"; \
 	  else \
 	    mkdir -p "$$dir"; \
-	    for src in $(RELEASE_FILES); do \
-	      dst="$$dir/$$src"; \
+	    for file in $(RELEASE_FILES); do \
+	      src="$(srcdir)/$$file"; \
+	      dst="$$dir/$$file"; \
 	      if test "$$src" = "Makefile"; then \
 	        sed <"$$src" >"$$dst" -e 's/^\( *Y_\(MAKEDIR\|EXE\(\|_PKGS\|_HOME\|_SITE\)\|HOME_PKG\) *=\).*/\1/'; \
 	        touch -r "$$src" "$$dst"; \
