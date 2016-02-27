@@ -109,7 +109,7 @@ $(RELEASE_NAME):
 	    for file in $(RELEASE_FILES); do \
 	      src="$(srcdir)/$$file"; \
 	      dst="$$dir/$$file"; \
-	      if test "$$src" = "Makefile"; then \
+	      if test "$$file" = "Makefile"; then \
 	        sed <"$$src" >"$$dst" -e 's/^\( *Y_\(MAKEDIR\|EXE\(\|_PKGS\|_HOME\|_SITE\)\|HOME_PKG\) *=\).*/\1/'; \
 	        touch -r "$$src" "$$dst"; \
 	      else \
