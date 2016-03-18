@@ -64,10 +64,11 @@ More detailled installation explanations are given below.
 
 4. Compile the code:
    ````{.sh}
+   make clean
    make
    ````
 
-4. Install the plug-in in Yorick directories:
+5. Install the plug-in in Yorick directories:
    ````{.sh}
    make install
    ````
