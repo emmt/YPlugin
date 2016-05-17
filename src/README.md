@@ -72,4 +72,3 @@ More detailled installation explanations are given below.
    ````{.sh}
    make install
    ````
-
