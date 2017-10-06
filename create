@@ -279,7 +279,7 @@ for file in Makefile configure README.md; do
     cfg_install "$cfg_srcdir/src/$file" "$cfg_destdir/$file"
 done
 chmod 755 "$cfg_destdir/configure"
-for file in gitattributes gitignore; do
+for file in dir-locals.el gitattributes gitignore; do
     cfg_install "$cfg_srcdir/src/$file" "$cfg_destdir/.$file"
 done
 if test -r "$cfg_srcdir/src/LICENSE.$cfg_license"; then
@@ -301,7 +301,7 @@ if test "x$cfg_email" != "x"; then
 else
     echo "$cfg_author" > AUTHORS
 fi
-git add .gitignore Makefile configure README.md AUTHORS NEWS TODO
+git add .dir-locals.el .gitignore Makefile configure README.md AUTHORS NEWS TODO
 git add "$cfg_pkg_c" "$cfg_pkg_i"
 test -r LICENSE.md && git add LICENSE.md
 git commit -m "Initial repository"
