@@ -57,7 +57,7 @@ PKG_I_DEPS=$(PKG_I)
 Y_DISTMAKE=distmake
 
 ifeq (,$(strip $(Y_MAKEDIR)))
-$(info *** WARNING: Y_MAKEDIR not defined, you may run 'yorick -batch make.i' first)
+$(info *** WARNING: Y_MAKEDIR not defined, you may run 'configure' or 'yorick -batch make.i' first)
 else
 include $(Y_MAKEDIR)/Make.cfg
 include $(Y_MAKEDIR)/Makepkg
