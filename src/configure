@@ -128,8 +128,8 @@ while test $# -ge 1; do
 done
 
 case "$cfg_arch" in
-  mswin) cfg_exe_sfx=".exe";;
-  *)     cfg_exe_sfx=""
+  mswin|mswin-*) cfg_exe_sfx=".exe";;
+  *)             cfg_exe_sfx=""
 esac
 
 # Search Yorick in the path:
