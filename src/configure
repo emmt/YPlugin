@@ -6,7 +6,7 @@
 #
 # This file is licensed under the MIT "Expat" License.
 #
-# Copyright (C) 2015, Éric Thiébaut <eric.thiebaut@univ-lyon1.fr>
+# Copyright (C) 2015-2018, Éric Thiébaut <https://github.com/emmt/YPlugin>
 #
 #------------------------------------------------------------------------------
 
@@ -43,20 +43,18 @@ cfg_despace () { echo "$*" | sed -e 's/ /\\ /g'; }
 cfg_add_rule () {
     local s t
     s=$*
-    for t in "/" "%" "@" "," "-"; do
+    for t in "/" "%" "@" "|" "#" "," "-"
+    do
         case "$s" in
-            *$t* )
-                ;;
-            * )
-                break
+            *$t* ) ;;
+            * ) break
         esac
     done
-    if test "$t" = "-"; then
-        cfg_die "No valid separator found"
-    fi
+    test "$t" = "-" && cfg_die "No valid separator found"
     s='[ 	]*'
     s="s${t}^${s}${1}${s}=.*${t}${1}=${2}${t}"
-    if test "x$cfg_filter" = "x"; then
+    if test "x$cfg_filter" = "x"
+    then
         cfg_filter="$s"
     else
         cfg_filter="$cfg_filter;$s"
@@ -130,11 +128,8 @@ while test $# -ge 1; do
 done
 
 case "$cfg_arch" in
-    mswin )
-        cfg_exe_sfx=.exe
-        ;;
-    * )
-        cfg_exe_sfx=
+  mswin) cfg_exe_sfx=".exe";;
+  *)     cfg_exe_sfx=""
 esac
 
 # Search Yorick in the path:
@@ -153,7 +148,7 @@ fi
 if test "x$cfg_yorick" = "xyorick" \
         -o ! -f "$cfg_yorick" \
         -o ! -x "$cfg_yorick"; then
-    echo >&2 "Yorick excutable not found."
+    echo >&2 "Yorick executable not found."
     echo >&2 "Try to specify the path with option --yorick=..."
     exit 1
 fi
