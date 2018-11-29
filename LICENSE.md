@@ -1,7 +1,7 @@
 The YPlugin template plug-in for Yorick is licensed under the
 MIT "Expat" License:
 
-> Copyright (c) 2015: Éric Thiébaut <eric.thiebaut@univ-lyon1.fr>
+> Copyright (c) 2015-2018: Éric Thiébaut <https://github.com/emmt/YPlugin>
 >
 > Permission is hereby granted, free of charge, to any person obtaining
 > a copy of this software and associated documentation files (the
