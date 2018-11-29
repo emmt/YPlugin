@@ -4,9 +4,11 @@ This is a simple script to help you creating a Git repository for a
 [Yorick](http://yorick.github.com/) plug-in.
 
 Compared to the standard:
-````{.sh}
+
+```sh
 yorick -batch make.i
 ```
+
 this script populates a directory with initial files (`Makefile`,
 `LICENSE.md`, `README.md`, `AUTHORS`, *etc.*), initializes this directory as
 a Git repository (with suitable `.gitignore` and `.gitattributes` files)
@@ -18,9 +20,11 @@ built in a different directory leaving the source tree unchanged).
 ## Usage
 
 You simply execute the [`create`](./create) script with a few parameters:
-```{.sh}
+
+```sh
 ./create [-h|--help] [OPTIONS] [--] NAME [DESTDIR]
 ```
+
 to create an initial Git repository for Yorick plugin `NAME` in directory
 `DESTDIR` which must not already exists.  If `DESTDIR` is not given, it is
 taken to be the argument `NAME` (with `/` replaced by `-`).  Note that the
@@ -47,10 +51,12 @@ values in the `configure` script of the plug-in.  If unspecified, the
 author name and email are guessed from the global Git configuration
 parameters or from the informations available in `/etc/passwd`.  If not yet
 done, you may set these with:
-````{.sh}
+
+```sh
 git config --global user.name "FULL NAME"
 git config --global user.email "EMAIL"
 ```
+
 If you accept the settings, the `create` script makes the `DESTDIR` and
 populates it with some initial files.  Instructions in the `README.md` file
 explain how to use the `configure` script to build the plug-in.
