@@ -131,6 +131,9 @@ while test $# -ge 1; do
         --email=*)
             cfg_email=$(cfg_opt_value "$cfg_arg")
             ;;
+        --cflags=*)
+            cfg_cflags=$(cfg_opt_value "$cfg_arg")
+            ;;
         --ldflags=*)
             cfg_ldflags=$(cfg_opt_value "$cfg_arg")
             ;;
