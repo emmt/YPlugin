@@ -7,7 +7,7 @@ Installation
 ------------
 
 In short, building and installing the plug-in can be as quick as:
-```{.sh}
+```sh
 cd $BUILD_DIR
 $SRC_DIR/configure
 make
@@ -20,11 +20,11 @@ can be the same in which case, call `./configure` to configure for building.
 If the plug-in has been properly installed, it is sufficient to use any of its
 functions to automatically load the plug-in.  You may force the loading of the
 plug-in by something like:
-```{.cpp}
+```cpp
 #include "@pkg_i@"
 ```
 or
-```{.cpp}
+```cpp
 require, "@pkg_i@";
 ```
 in your code.
@@ -39,36 +39,36 @@ More detailled installation explanations are given below.
 
    For an **in-place build**, go to the source directory of the plug-in code
    and run the configuration script:
-   ```{.sh}
+   ```sh
    cd SRC_DIR
    ./configure
    ```
    To see the configuration options, type:
-   ```{.sh}
+   ```sh
    ./configure --help
    ```
 
    To compile in a **different build directory**, say `$BUILD_DIR`, create the
    build directory, go to the build directory, and run the configuration
    script:
-   ```{.sh}
+   ```sh
    mkdir -p $BUILD_DIR
    cd $BUILD_DIR
    $SRC_DIR/configure
    ```
    where `$SRC_DIR` is the path to the source directory of the plug-in code.
    To see the configuration options, type:
-   ```{.sh}
+   ```sh
    $SRC_DIR/configure --help
    ```
 
 4. Compile the code:
-   ```{.sh}
+   ```sh
    make clean
    make
    ```
 
 5. Install the plug-in in Yorick directories:
-   ```{.sh}
+   ```sh
    make install
    ```
