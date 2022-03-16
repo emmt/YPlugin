@@ -1,7 +1,7 @@
 # YPlugin
 
 This is a simple script to help you creating a Git repository for a
-[Yorick](http://yorick.github.com/) plug-in.
+[Yorick](http://github.com/LLNL/yorick/) plug-in.
 
 Compared to the standard:
 
